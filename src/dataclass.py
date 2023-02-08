@@ -8,5 +8,7 @@ class Pokemon:
     name : str
     position : tuple
     sprite : None
+    footprint : None
     correct : bool
+    pressed : bool
 

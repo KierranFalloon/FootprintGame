@@ -46,6 +46,9 @@ def get_pokemon():
 # Setup Pokemon list
     return list_of_files()
 
+def tuple_subtraction(tuple1, tuple2):
+    return tuple(map(lambda i, j: i - j, tuple1, tuple2))
+
 def surf_from_url(other_pokemon):
     image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon" # Open source pokemon sprites
     image_files = []
@@ -72,50 +75,36 @@ def generate_pokemon(footprint):
 
     # Pokemon sprites and names
     other_pokemon = random.sample(get_pokemon(), 3)
-    other_pokemon.append(footprint)
+    other_pokemon.append(footprint) # initially 4th pokemon in the list is the correct one
 
+    # Get pokemon names and footprints
     pokemon_1_name = name_from_api(other_pokemon[0])
-    pokemon_2_name = name_from_api(other_pokemon[1])
-    pokemon_3_name = name_from_api(other_pokemon[2])
-    pokemon_4_name = name_from_api(other_pokemon[3])
+    pokemon_1_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[0])+'.png')).convert()
 
-    pokemon_1_sprite, pokemon_2_sprite, pokemon_3_sprite, pokemon_4_sprite = surf_from_url(other_pokemon)
+    pokemon_2_name = name_from_api(other_pokemon[1])
+    pokemon_2_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[1])+'.png')).convert()
+
+    pokemon_3_name = name_from_api(other_pokemon[2])
+    pokemon_3_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[2])+'.png')).convert()
+
+    pokemon_4_name = name_from_api(other_pokemon[3])
+    pokemon_4_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[3])+'.png')).convert()
+
+    pokemon_1_sprite, pokemon_2_sprite, pokemon_3_sprite, pokemon_4_sprite = surf_from_url(other_pokemon) #sprites
 
     v_offset = 70
     h_offset = 75
     positions = [(h_offset, v_offset), (SCREEN_WIDTH/4 + h_offset, v_offset), (h_offset, SCREEN_HEIGHT/4 + v_offset), (SCREEN_WIDTH/4 + h_offset,SCREEN_HEIGHT/4 + v_offset)]
+    
     rand_pokemon_positions = random.sample(positions, 4)
-
     pokemon_1_position = rand_pokemon_positions[0]
     pokemon_2_position = rand_pokemon_positions[1]
     pokemon_3_position = rand_pokemon_positions[2]
     pokemon_4_position = rand_pokemon_positions[3]
 
-    # PREDETERMINE POSITION OF POKEMON: (could be done smarter, will do for now)
-    truth_array = [tuple_checker(rand_pokemon_positions[3], i) for i in pokemon_boxes]
-    if truth_array == [True, False, False, False]:
-        pokemon_1_correct = True
-    else:
-        pokemon_1_correct = False
-
-    if truth_array == [True, True, False, False]:
-        pokemon_2_correct = True
-    else:
-        pokemon_2_correct = False
-
-    if truth_array == [True, False, True, False]:
-        pokemon_3_correct = True
-    else:
-        pokemon_3_correct = False
-
-    if truth_array == [True, True, True, True]:
-        pokemon_4_correct = True
-    else:
-        pokemon_4_correct = False
-
-    pokemon_1 = Pokemon(pokemon_1_name, pokemon_1_position, pokemon_1_sprite, pokemon_1_correct)
-    pokemon_2 = Pokemon(pokemon_2_name, pokemon_2_position, pokemon_2_sprite, pokemon_2_correct)
-    pokemon_3 = Pokemon(pokemon_3_name, pokemon_3_position, pokemon_3_sprite, pokemon_3_correct)
-    pokemon_4 = Pokemon(pokemon_4_name, pokemon_4_position, pokemon_4_sprite, pokemon_4_correct)
+    pokemon_1 = Pokemon(pokemon_1_name, pokemon_1_position, pokemon_1_sprite, pokemon_1_footprint, False, False)
+    pokemon_2 = Pokemon(pokemon_2_name, pokemon_2_position, pokemon_2_sprite, pokemon_2_footprint, False, False)
+    pokemon_3 = Pokemon(pokemon_3_name, pokemon_3_position, pokemon_3_sprite, pokemon_3_footprint, False, False)
+    pokemon_4 = Pokemon(pokemon_4_name, pokemon_4_position, pokemon_4_sprite, pokemon_4_footprint, True, False)
 
     return pokemon_1, pokemon_2, pokemon_3, pokemon_4
