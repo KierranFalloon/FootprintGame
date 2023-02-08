@@ -51,6 +51,10 @@ def surf_from_url(other_pokemon):
 
     return pokemon_1, pokemon_2, pokemon_3, chosen_pokemon
 
-def name_from_api(number):
+def name_from_api(number) -> str:
     pokemon_api = "https://pokeapi.co/api/v2/pokemon/{}".format(number)
     return str(requests.get(pokemon_api).json()["name"])
+
+def tuple_checker(coordinates, box) -> bool: 
+
+    return all([(a > b) for a, b in zip(coordinates,box)])
