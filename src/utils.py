@@ -1,24 +1,7 @@
-"""Test availability of required packages."""
-
 import unittest
 from pathlib import Path
-import pkg_resources
-import os
-import io
-from urllib.request import urlopen
-import pygame
-import requests
 
 _REQUIREMENTS_PATH = Path(__file__).parent.with_name("requirements.txt")
-
-# white color
-color = (255,255,255)
-  
-# light shade of the button
-color_light = (170,170,170)
-  
-# dark shade of the button
-color_dark = (100,100,100)
 
 class TestRequirements(unittest.TestCase):
     """Test availability of required packages."""
@@ -31,11 +14,37 @@ class TestRequirements(unittest.TestCase):
             with self.subTest(requirement=requirement):
                 pkg_resources.require(requirement)
 
+from dataclass import Pokemon
+import pkg_resources
+import os
+import io
+from urllib.request import urlopen
+import pygame
+import requests
+import random
+
+SCREEN_WIDTH = 1600
+SCREEN_HEIGHT = 900
+pokemon_boxes = [(0,0), (SCREEN_WIDTH/4,0), (0,SCREEN_HEIGHT/4), (SCREEN_WIDTH/4,SCREEN_HEIGHT/4)]
+
+# white color
+color = (255,255,255)
+  
+# light shade of the button
+color_light = (170,170,170)
+  
+# dark shade of the button
+color_dark = (100,100,100)
+
 def list_of_files():
     pokemon_list = []
     path = os.path.join(os.getcwd(), 'Sprites')
     files = [int(f.split('.')[0]) for f in os.listdir(path)]
     return files
+
+def get_pokemon():
+# Setup Pokemon list
+    return list_of_files()
 
 def surf_from_url(other_pokemon):
     image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon" # Open source pokemon sprites
@@ -57,4 +66,56 @@ def name_from_api(number) -> str:
 
 def tuple_checker(coordinates, box) -> bool: 
 
-    return all([(a > b) for a, b in zip(coordinates,box)])
+    return all([(a > b) for a, b in zip(coordinates, box)])
+
+def generate_pokemon(footprint):
+
+    # Pokemon sprites and names
+    other_pokemon = random.sample(get_pokemon(), 3)
+    other_pokemon.append(footprint)
+
+    pokemon_1_name = name_from_api(other_pokemon[0])
+    pokemon_2_name = name_from_api(other_pokemon[1])
+    pokemon_3_name = name_from_api(other_pokemon[2])
+    pokemon_4_name = name_from_api(other_pokemon[3])
+
+    pokemon_1_sprite, pokemon_2_sprite, pokemon_3_sprite, pokemon_4_sprite = surf_from_url(other_pokemon)
+
+    v_offset = 70
+    h_offset = 75
+    positions = [(h_offset, v_offset), (SCREEN_WIDTH/4 + h_offset, v_offset), (h_offset, SCREEN_HEIGHT/4 + v_offset), (SCREEN_WIDTH/4 + h_offset,SCREEN_HEIGHT/4 + v_offset)]
+    rand_pokemon_positions = random.sample(positions, 4)
+
+    pokemon_1_position = rand_pokemon_positions[0]
+    pokemon_2_position = rand_pokemon_positions[1]
+    pokemon_3_position = rand_pokemon_positions[2]
+    pokemon_4_position = rand_pokemon_positions[3]
+
+    # PREDETERMINE POSITION OF POKEMON: (could be done smarter, will do for now)
+    truth_array = [tuple_checker(rand_pokemon_positions[3], i) for i in pokemon_boxes]
+    if truth_array == [True, False, False, False]:
+        pokemon_1_correct = True
+    else:
+        pokemon_1_correct = False
+
+    if truth_array == [True, True, False, False]:
+        pokemon_2_correct = True
+    else:
+        pokemon_2_correct = False
+
+    if truth_array == [True, False, True, False]:
+        pokemon_3_correct = True
+    else:
+        pokemon_3_correct = False
+
+    if truth_array == [True, True, True, True]:
+        pokemon_4_correct = True
+    else:
+        pokemon_4_correct = False
+
+    pokemon_1 = Pokemon(pokemon_1_name, pokemon_1_position, pokemon_1_sprite, pokemon_1_correct)
+    pokemon_2 = Pokemon(pokemon_2_name, pokemon_2_position, pokemon_2_sprite, pokemon_2_correct)
+    pokemon_3 = Pokemon(pokemon_3_name, pokemon_3_position, pokemon_3_sprite, pokemon_3_correct)
+    pokemon_4 = Pokemon(pokemon_4_name, pokemon_4_position, pokemon_4_sprite, pokemon_4_correct)
+
+    return pokemon_1, pokemon_2, pokemon_3, pokemon_4

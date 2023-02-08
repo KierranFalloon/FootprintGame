@@ -1,4 +1,5 @@
-from utils import TestRequirements, list_of_files, surf_from_url, name_from_api, tuple_checker
+from dataclass import Pokemon
+from utils import TestRequirements, tuple_checker, generate_pokemon, get_pokemon
 from utils import color_dark, color, color_light
 try:
     TestRequirements().test_requirements()
@@ -10,10 +11,6 @@ import pygame
 import os
 import random
 from urllib.request import urlopen
-
-def get_pokemon():
-# Setup Pokemon list
-    return list_of_files()
 
 pygame.mixer.init()
 pygame.init()
@@ -45,16 +42,11 @@ footprint_image = pygame.image.load(os.path.join('Sprites', str(footprint)+'.png
 footprint_image = pygame.transform.scale(footprint_image, (200, 200))
 
 # Pokemon sprites and names
-other_pokemon = random.sample(get_pokemon(), 3)
-other_pokemon.append(footprint)
-name_list = [name_from_api(other_pokemon[0]),name_from_api(other_pokemon[1]), name_from_api(other_pokemon[2]), name_from_api(other_pokemon[3])]
-name_1, name_2, name_3, name_4 = solid_font.render(name_list[0], True, color_dark), solid_font.render(name_list[1], True, color_dark), solid_font.render(name_list[2], True, color_dark), solid_font.render(name_list[3], True, color_dark)
-pokemon_1, pokemon_2, pokemon_3, chosen_pokemon = surf_from_url(other_pokemon)
-v_offset = 70
-h_offset = 75
-positions = [(h_offset, v_offset), (SCREEN_WIDTH/4 + h_offset, v_offset), (h_offset, SCREEN_HEIGHT/4 + v_offset), (SCREEN_WIDTH/4 + h_offset,SCREEN_HEIGHT/4 + v_offset)]
-rand_pokemon_positions = random.sample(positions, 4)
-
+pokemon_1, pokemon_2, pokemon_3, pokemon_4 = generate_pokemon(footprint)
+name1 = hollow_font.render(pokemon_1.name, True, color_dark)
+name2 = hollow_font.render(pokemon_2.name, True, color_dark)
+name3 = hollow_font.render(pokemon_3.name, True, color_dark)
+name4 = hollow_font.render(pokemon_4.name, True, color_dark)
 pokemon_box = pygame.image.load(os.path.join('Images', 'Card.png')).convert()
 pokemon_box = pygame.transform.scale(pokemon_box, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
 
@@ -76,28 +68,28 @@ while running:
             # button the game is terminated
             if tuple_checker(mouse, pokemon_boxes[0]) == True:
                 print("BOX 1")
-                if tuple_checker(rand_pokemon_positions[3], pokemon_boxes[0]) == True:
+                if pokemon_1.correct == True:
                     print('Correct!')
                 else:
                     print("WRONG LOL")
 
             if tuple_checker(mouse, pokemon_boxes[1]) == True:
                 print("BOX 2")
-                if tuple_checker(rand_pokemon_positions[3], pokemon_boxes[1]) == True:
+                if pokemon_2.correct == True:
                     print('Correct!')
                 else:
                     print("WRONG LOL")
 
             if tuple_checker(mouse, pokemon_boxes[2]) == True:
                 print("BOX 3")
-                if tuple_checker(rand_pokemon_positions[3], pokemon_boxes[2]) == True:
+                if pokemon_3.correct == True:
                     print('Correct!')
                 else:
                     print("WRONG LOL")
 
             if tuple_checker(mouse, pokemon_boxes[3]) == True:
                 print("BOX 4")
-                if tuple_checker(rand_pokemon_positions[3], pokemon_boxes[3]) == True:
+                if pokemon_4.correct == True:
                     print('Correct!')
                 else:
                     print("WRONG LOL")
@@ -114,14 +106,18 @@ while running:
     screen.blit(pokemon_box, pokemon_boxes[2])
     screen.blit(pokemon_box, pokemon_boxes[3])
 
-    screen.blit(pokemon_1, rand_pokemon_positions[0])
-    screen.blit(name_1, rand_pokemon_positions[0])
-    screen.blit(pokemon_2, rand_pokemon_positions[1])
-    screen.blit(name_2, rand_pokemon_positions[1])
-    screen.blit(pokemon_3, rand_pokemon_positions[2])
-    screen.blit(name_3, rand_pokemon_positions[2])
-    screen.blit(chosen_pokemon, rand_pokemon_positions[3]) # rand_pokemon_positions[3] is always the position of the pokemon
-    screen.blit(name_4, rand_pokemon_positions[3])
+    screen.blit(pokemon_1.sprite, pokemon_1.position)
+    screen.blit(name1, pokemon_1.position)
+
+    screen.blit(pokemon_2.sprite, pokemon_2.position)
+    screen.blit(name2, pokemon_2.position)
+
+    screen.blit(pokemon_3.sprite, pokemon_3.position)
+    screen.blit(name3, pokemon_3.position)
+
+    screen.blit(pokemon_4.sprite, pokemon_4.position)
+    screen.blit(name4, pokemon_4.position)
+
     pygame.display.flip()
 
     mouse = tuple(pygame.mouse.get_pos())
