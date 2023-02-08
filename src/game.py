@@ -1,6 +1,7 @@
 from dataclass import Pokemon
 from utils import TestRequirements, tuple_checker, generate_pokemon, get_pokemon, tuple_subtraction
 from utils import color_dark, color, color_light
+import threading
 try:
     TestRequirements().test_requirements()
 except Exception as e:
@@ -22,22 +23,26 @@ solid_font = pygame.font.Font('Fonts/PokemonSolid.ttf',25)
 
 pygame.mixer.music.load("Music.mp3")
 pygame.mixer.music.play(loops=-1)
-
+pygame.display.set_caption("Footprint game!")
+clock = pygame.time.Clock()
 # Set up the drawing window
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
 screen = pygame.display.set_mode([1600, 900])
 bg = pygame.image.load(os.path.join('Images', 'Background.png')).convert()
-BG_WIDTH = SCREEN_WIDTH/2
+bg2 = pygame.image.load(os.path.join('Images', 'Background_3.png')).convert()
+BG_WIDTH = (SCREEN_WIDTH/2)
 BG_HEIGHT = SCREEN_HEIGHT
 BG_center = (
     (SCREEN_WIDTH-BG_WIDTH/2-100),
     (SCREEN_HEIGHT-BG_HEIGHT/2-150))
 background = pygame.transform.scale(bg, (BG_WIDTH, BG_HEIGHT))
+background_2 = pygame.transform.scale(bg2, (BG_WIDTH, BG_HEIGHT/2))
 pokemon_boxes = [(0,0), (SCREEN_WIDTH/4,0), (0,SCREEN_HEIGHT/4), (SCREEN_WIDTH/4,SCREEN_HEIGHT/4)]
 
 # Pokemon footprint definition
 footprint = random.choice(get_pokemon())
+print(footprint)
 footprint_image = pygame.image.load(os.path.join('Sprites', str(footprint)+'.png')).convert()
 footprint_image = pygame.transform.scale(footprint_image, (200, 200))
 
@@ -108,7 +113,7 @@ while running:
                 print("Wrong")
 
     screen.blit(background, (SCREEN_WIDTH-BG_WIDTH ,0))
-    #screen.blit(footprint_image, (640, 360)
+    screen.blit(background_2, (0, SCREEN_HEIGHT/2))
     screen.blit(footprint_image, BG_center)
     pygame.display.flip()
 
@@ -149,6 +154,5 @@ while running:
         screen.blit(pokemon_4.footprint, footprint_rect)
 
     pygame.display.flip()
-      
 
 pygame.quit()

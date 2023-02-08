@@ -57,15 +57,24 @@ def surf_from_url(other_pokemon):
         # create a file object (stream)
         image_files.append(io.BytesIO(image_str))
     pokemon_1 = pygame.image.load(image_files[0])
+    pokemon_1 = pygame.transform.scale(pokemon_1, (100, 100))
     pokemon_2 = pygame.image.load(image_files[1])
+    pokemon_2 = pygame.transform.scale(pokemon_2, (100, 100))
     pokemon_3 = pygame.image.load(image_files[2])
+    pokemon_3 = pygame.transform.scale(pokemon_3, (100, 100))
     chosen_pokemon = pygame.image.load(image_files[3])
+    chosen_pokemon = pygame.transform.scale(chosen_pokemon, (100, 100))
+
 
     return pokemon_1, pokemon_2, pokemon_3, chosen_pokemon
 
 def name_from_api(number) -> str:
     pokemon_api = "https://pokeapi.co/api/v2/pokemon/{}".format(number)
-    return str(requests.get(pokemon_api).json()["name"])
+
+    name = str(requests.get(pokemon_api).json()["name"])
+    if "-" in name:
+        name = name.split('-')[0]
+    return name
 
 def tuple_checker(coordinates, box) -> bool: 
 
