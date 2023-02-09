@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+import pygame
 @dataclass
 class Pokemon:
     """
@@ -7,8 +7,8 @@ class Pokemon:
     """
     name : str
     position : tuple
-    sprite : None
-    footprint : None
+    sprite : pygame.surface.Surface
+    footprint : pygame.surface.Surface
     correct : bool
     pressed : bool
 
