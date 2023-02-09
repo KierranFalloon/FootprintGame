@@ -236,7 +236,7 @@ def main():
         
         if delay == True:
             init_time = pygame.time.get_ticks()
-            while not pygame.time.get_ticks() > 5000 + init_time:
+            while not pygame.time.get_ticks() > 3000 + init_time:
                 make_text()
                 change_text()
                 update_screen()
