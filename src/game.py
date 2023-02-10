@@ -46,7 +46,6 @@ def main():
         pokemon_list = [pokemon_1, pokemon_2, pokemon_3, pokemon_4] # List of pokemon generated, in order 
 
     def update_screen():
-        pygame.mixer.Channel(0).stop()
         screen.blit(pokemon_1.sprite, pokemon_1.position)
         name_1_rect = name1.get_rect(center = tuple_subtraction(pokemon_1.position, (-50,-175)))
         screen.blit(name1, name_1_rect)
@@ -79,7 +78,6 @@ def main():
             screen.blit(pokemon_4.footprint, footprint_rect)
 
         if mouse_in_boxes != []:
-            pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
             screen.blit(pokemon_box_highlight, collision_boxes[mouse_in_boxes[0]])
 
         pygame.display.update(foot_zone)
@@ -120,7 +118,7 @@ def main():
     SCREEN_WIDTH = infoObject.current_w
     SCREEN_HEIGHT = infoObject.current_h
 
-    flags =  DOUBLEBUF | RESIZABLE | FULLSCREEN
+    flags =  DOUBLEBUF | RESIZABLE
     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT], flags, 16)
 
     foot_zone = pygame.Rect(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT)
@@ -172,9 +170,10 @@ def main():
         "KF: .... Huh?! Looks wrong to me!",
         "KF: Huh? I don't think so. Try again!",
     ]
-    running = True
-    delay = False
-    win = False
+    running = True 
+    delay = False # Text based delay
+    win = False # win condition, used for resetting pokemon
+    temp = [] # temporary box tracker to check if mouse switches between box
 
     while running:
         clock.tick(30)
@@ -190,12 +189,19 @@ def main():
             pygame.quit()
 
         if mouse_in_boxes == []: # If not hovering a pokemon choice
+            if temp != []:
+                pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
+                temp = []
+
             text_string = "KF: Here comes a Pokémon! \n Check its footprint and tell me what it is!"
             name_text = text_font.render(text_string, True, color)
 
         #checks if a mouse is clicked INSIDE of a box
         if mouse_in_boxes != []:
-            pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
+            if mouse_in_boxes[0] != temp:
+                pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
+                temp = mouse_in_boxes[0]
+
             pokemon_hovering = pokemon_list[pokemon_in_boxes.index(mouse_in_boxes[0])].name
             text_string = "KF: Is this pokemon {}?".format(str(pokemon_hovering))
 
