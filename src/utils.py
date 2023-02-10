@@ -45,32 +45,34 @@ def get_pokemon():
 def tuple_subtraction(tuple1, tuple2):
     return tuple(map(lambda i, j: i - j, tuple1, tuple2))
 
-def surf_from_url(other_pokemon):
-    image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon" # Open source pokemon sprites
+def surf_from_api(other_pokemon):
+    image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{}.png" # Open source pokemon sprites
     image_files = []
     for i in range(4):
-        image_str = urlopen(os.path.join(image_url, str(other_pokemon[i])+'.png')).read()
+        image_str = urlopen(image_url.format(other_pokemon[i])).read()
         # create a file object (stream)
         image_files.append(io.BytesIO(image_str))
     pokemon_1_img = pygame.image.load(image_files[0]).convert_alpha()
-    pokemon_1_img = pygame.transform.scale(pokemon_1_img, (150, 150))
+    pokemon_1_img = pygame.transform.scale(pokemon_1_img, (140, 140))
     pokemon_2_img = pygame.image.load(image_files[1]).convert_alpha()
-    pokemon_2_img = pygame.transform.scale(pokemon_2_img, (150, 150))
+    pokemon_2_img = pygame.transform.scale(pokemon_2_img, (140, 140))
     pokemon_3_img = pygame.image.load(image_files[2]).convert_alpha()
-    pokemon_3_img = pygame.transform.scale(pokemon_3_img, (150, 150))
+    pokemon_3_img = pygame.transform.scale(pokemon_3_img, (140, 140))
     pokemon_4_img = pygame.image.load(image_files[3]).convert_alpha()
-    pokemon_4_img = pygame.transform.scale(pokemon_4_img, (150, 150))
-
+    pokemon_4_img = pygame.transform.scale(pokemon_4_img, (140, 140))
 
     return pokemon_1_img, pokemon_2_img, pokemon_3_img, pokemon_4_img
 
 def name_from_api(number) -> str:
     pokemon_api = "https://pokeapi.co/api/v2/pokemon/{}".format(number)
 
-    name = str(requests.get(pokemon_api).json()["name"])
-    if "-" in name and not name == 'mime-jr.':
-        name = name.split('-')[0]
-    return name
+    try:
+        name = str(requests.get(pokemon_api).json()["name"])
+        if "-" in name and not name == 'mime-jr' and not name == "mr-mime":
+            name = name.split('-')[0]
+        return name
+    except Exception as e:
+        print(e, "\n pokemon: {}".format(number))
 
 def tuple_checker(coordinates, box) -> bool: 
 
@@ -104,7 +106,7 @@ def generate_pokemon():
     pokemon_4_name = name_from_api(other_pokemon[3])
     pokemon_4_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[3])+'.png')).convert_alpha()
 
-    pokemon_1_sprite, pokemon_2_sprite, pokemon_3_sprite, pokemon_4_sprite = surf_from_url(other_pokemon) #sprites
+    pokemon_1_sprite, pokemon_2_sprite, pokemon_3_sprite, pokemon_4_sprite = surf_from_api(other_pokemon) #sprites
 
     h_offset = 250 * ratio[0]
     v_offset = 150 * ratio[1]
