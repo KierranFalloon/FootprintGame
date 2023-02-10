@@ -46,7 +46,14 @@ def tuple_subtraction(tuple1, tuple2):
     return tuple(map(lambda i, j: i - j, tuple1, tuple2))
 
 def surf_from_api(other_pokemon):
-    image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{}.png" # Open source pokemon sprites
+    number = random.randint(1, 4096)
+    
+    if number == 1:
+
+        image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/{}.png"
+    
+    else:
+        image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{}.png" # Open source pokemon sprites
     image_files = []
     for i in range(4):
         image_str = urlopen(image_url.format(other_pokemon[i])).read()
@@ -64,6 +71,7 @@ def surf_from_api(other_pokemon):
     return pokemon_1_img, pokemon_2_img, pokemon_3_img, pokemon_4_img
 
 def name_from_api(number) -> str:
+
     pokemon_api = "https://pokeapi.co/api/v2/pokemon/{}".format(number)
 
     try:
