@@ -1,7 +1,10 @@
 from dataclass import Pokemon
-from utils import TestRequirements, tuple_checker, generate_pokemon, get_pokemon, tuple_subtraction, read_stats, add_stats
+
+import cython_utils.c_utils as c
+from utils import TestRequirements, generate_pokemon, tuple_subtraction
 from utils import color_dark, color, color_light
 import threading
+
 try:
     TestRequirements().test_requirements()
 except Exception as e:
@@ -16,7 +19,7 @@ import threading
 
 def main():
 
-    w, t, r = read_stats()
+    w, t, r = c.read_stats()
     def new_pokemon():
         global pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list
 
@@ -184,7 +187,7 @@ def main():
 
         if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE:
 
-            add_stats(w, t)
+            c.add_stats(w, t)
             running = False
             pygame.quit()
 
@@ -225,7 +228,7 @@ def main():
                     t += 1
                     pokemon_list[pokemon_clicked].pressed = True
                     pygame.display.update(boxes)
-                    add_stats(w, t)
+                    c.add_stats(w, t)
                 
                 else:
 
@@ -234,7 +237,7 @@ def main():
                     delay = True
 
                     t += 1
-                    add_stats(w, t)
+                    c.add_stats(w, t)
                     pokemon_list[pokemon_clicked].pressed = True
         
         screen.blit(background, (SCREEN_WIDTH-BG_WIDTH, 0))

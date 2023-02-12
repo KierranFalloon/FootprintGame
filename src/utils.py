@@ -1,5 +1,6 @@
 import unittest
 from pathlib import Path
+import pkg_resources
 
 _REQUIREMENTS_PATH = Path(__file__).parent.with_name("requirements.txt")
 
@@ -15,7 +16,6 @@ class TestRequirements(unittest.TestCase):
                 pkg_resources.require(requirement)
 
 from dataclass import Pokemon
-import pkg_resources
 import os
 import io
 from urllib.request import urlopen
@@ -42,13 +42,10 @@ def get_pokemon():
 # Setup Pokemon list
     return random.sample(list_of_files(), 4)
 
-def tuple_subtraction(tuple1, tuple2):
-    return tuple(map(lambda i, j: i - j, tuple1, tuple2))
-
 def surf_from_api(other_pokemon):
-    number = random.randint(1, 4096)
+    shiny_number = random.randint(1, 4096)
     
-    if number == 1:
+    if shiny_number == 1:
 
         image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/{}.png"
     
@@ -76,15 +73,9 @@ def name_from_api(number) -> str:
 
     try:
         name = str(requests.get(pokemon_api).json()["name"])
-        if "-" in name and not name == 'mime-jr' and not name == "mr-mime":
-            name = name.split('-')[0]
         return name
     except Exception as e:
         print(e, "\n pokemon: {}".format(number))
-
-def tuple_checker(coordinates, box) -> bool: 
-
-    return all([(a > b) for a, b in zip(coordinates, box)])
 
 def generate_pokemon():
 
@@ -133,23 +124,5 @@ def generate_pokemon():
 
     return pokemon_1, pokemon_2, pokemon_3, pokemon_4
 
-def read_stats():
-    try:
-        with open("stats.txt", "r") as stats:
-            wins = int(stats.readline())
-            tries = int(stats.readline())
-            ratio = float(stats.readline())
-        
-        return wins, tries, ratio
-
-    except:
-        w, t, r = 0, 0, 0
-        with open("stats.txt", "w") as stats:
-            stats.write(str(w)+"\n"+str(t)+"\n"+str(r))
-        
-        return w, t, r
-
-def add_stats(w, t):
-    ratio = float((int(w) / int(t)) * 100)
-    with open("stats.txt", "w+") as stats:
-        stats.write(str(w)+"\n"+str(t)+"\n"+str(ratio))
+def tuple_subtraction(tuple1, tuple2):
+    return tuple(map(lambda i, j: i - j, tuple1, tuple2))
