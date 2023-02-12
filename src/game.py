@@ -20,8 +20,17 @@ import threading
 def main():
 
     w, t, r = c.read_stats()
-    def new_pokemon():
-        global pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list
+    def new_pokemon() -> None:
+
+        """ Generates new random Pokémon choices, rendering their names and sprites from API.
+
+        Returns:
+            pokemon_1 pokemon_2, pokemon_3, pokemon_4 : Pokemon class containing all info of chosen Pokemon
+            name1, name2, name3, name4 : Rendered names of pokemon 1, 2, 3 and 4 respectively
+            footprint_image : Rendered footprint sprite
+            pokemon_in_boxes : List of box indexes which Pokemon are in
+            pokemon_list : List of Pokemon
+        """
 
         # Pokemon sprites and names
         pokemon_1, pokemon_2, pokemon_3, pokemon_4 = generate_pokemon()
@@ -41,19 +50,25 @@ def main():
         positions = [pokemon_1.position, pokemon_2.position, pokemon_3.position, pokemon_4.position]
         pokemon_in_boxes = []
 
-        for i in positions: 
+        for i in positions:
             pokemon_in_boxes.append(*[index for index, p, in enumerate(collision_boxes) if p.collidepoint(i)])
 
         ###
 
         pokemon_list = [pokemon_1, pokemon_2, pokemon_3, pokemon_4] # List of pokemon generated, in order 
 
-    def update_screen():
+        return pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list
+
+    def update_screen() -> None:
+
+        """ Updates the screen in parts, rather than updating entire screen each time something is changed or rendered
+        """
+
         screen.blit(pokemon_1.sprite, pokemon_1.position)
         name_1_rect = name1.get_rect(center = tuple_subtraction(pokemon_1.position, (-50,-175)))
         screen.blit(name1, name_1_rect)
 
-        if pokemon_1.pressed == True:
+        if pokemon_1.pressed is True:
             footprint_rect = pokemon_1.footprint.get_rect(center = tuple_subtraction(pokemon_1.position, (-250, -100)))
             screen.blit(pokemon_1.footprint, footprint_rect)
 
@@ -61,7 +76,7 @@ def main():
         name_2_rect = name2.get_rect(center = tuple_subtraction(pokemon_2.position, (-50,-175)))
         screen.blit(name2, name_2_rect)
 
-        if pokemon_2.pressed == True:
+        if pokemon_2.pressed is True:
             footprint_rect = pokemon_2.footprint.get_rect(center = tuple_subtraction(pokemon_2.position, (-250, -100)))
             screen.blit(pokemon_2.footprint, footprint_rect)
 
@@ -69,14 +84,14 @@ def main():
         name_3_rect = name3.get_rect(center = tuple_subtraction(pokemon_3.position, (-50,-175)))
         screen.blit(name3, name_3_rect)
 
-        if pokemon_3.pressed == True:
+        if pokemon_3.pressed is True:
             footprint_rect = pokemon_3.footprint.get_rect(center = tuple_subtraction(pokemon_3.position, (-250, -100)))
             screen.blit(pokemon_3.footprint, footprint_rect)
 
         screen.blit(pokemon_4.sprite, pokemon_4.position)
         name_4_rect = name4.get_rect(center = tuple_subtraction(pokemon_4.position, (-50,-175)))
         screen.blit(name4, name_4_rect)
-        if pokemon_4.pressed == True:
+        if pokemon_4.pressed is True:
             footprint_rect = pokemon_4.footprint.get_rect(center = tuple_subtraction(pokemon_4.position, (-250, -100)))
             screen.blit(pokemon_4.footprint, footprint_rect)
 
@@ -86,31 +101,41 @@ def main():
         pygame.display.update(foot_zone)
         pygame.display.update(boxes)
 
-    def make_text(text):
+    def make_text(text) -> list:
+        """ Create an array of text for multi-line rendering
 
-        global label
+        Args:
+            text (str): Text you wish to render
+
+        Returns:
+            label (list): List of text, rendered to pygame text
+        """
+
         label = []
-        try:
-            for line in text: 
-                label.append(text_font.render(line, True, color))
-        except Exception as e:
-            print('Error loading text: \n{}'.format(e))
+        for line in text: 
+            label.append(text_font.render(line, True, color))
 
-    def change_text():
+        return label
+
+    def change_text(label) -> None:
+        """ Adds to the screen each instance of text within 'label', generated from make_text
+
+        Args:
+            label (list): List of text, rendered to pygame text (output of make_text())
+        """
  
         screen.blit(text_box, (SCREEN_WIDTH/2, 3*SCREEN_HEIGHT/4))
 
         position = [SCREEN_WIDTH/2+50, 3*SCREEN_HEIGHT/4+50]
 
-        for line in range(len(label)):  
-            screen.blit(label[line],(position[0],position[1]+(line*fontsize)+(15*line)))
+        for index, line in enumerate(label):
+            screen.blit(label[index],(position[0],position[1]+(line*fontsize)+(15*line)))
     
     pygame.mixer.pre_init()
     pygame.mixer.init()
     pygame.init()
     clock = pygame.time.Clock()
 
-    hollow_font = pygame.font.Font('Fonts/PokemonHollow.ttf',25)
     solid_font = pygame.font.Font('Fonts/PokemonSolid.ttf',25)
     fontsize = 50
     text_font = pygame.font.Font('Fonts/PKMN-Mystery-Dungeon.ttf', fontsize)
@@ -171,7 +196,7 @@ def main():
         pokemon_box_rect_4
     ]
 
-    new_pokemon()
+    pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list = new_pokemon()
 
     game_text_correct_strings = [
         ["KF: .... Yep! Looks like you're right to me!"],
@@ -187,6 +212,7 @@ def main():
     win = False # win condition, used for resetting pokemon
     temp = [] # temporary box tracker to check if mouse switches between box
 
+    ### Game running
     while running:
         clock.tick(30)
         mouse = tuple(pygame.mouse.get_pos())
@@ -228,7 +254,7 @@ def main():
 
                 pokemon_list[pokemon_clicked].pressed = True # Allow footprint to appear
 
-                if pokemon_list[pokemon_clicked].correct == True: # If correct pokemon
+                if pokemon_list[pokemon_clicked].correct is True: # If correct pokemon
 
                     pygame.mixer.Channel(1).play(correct_sound)
                     text_string = random.choice(game_text_correct_strings)
@@ -260,20 +286,20 @@ def main():
         screen.blit(pokemon_box, pokemon_boxes[2])
         screen.blit(pokemon_box, pokemon_boxes[3])
 
-        if delay == False:
-            make_text(text_string)
-            change_text()
+        if delay is False:
+            label = make_text(text_string)
+            change_text(label)
             update_screen()
         
-        if delay == True:
+        if delay is True:
             init_time = pygame.time.get_ticks()
             while not pygame.time.get_ticks() > 1000 + init_time:
-                make_text(text_string)
-                change_text()
+                label = make_text(text_string)
+                change_text(label)
                 update_screen()
             delay = False
-            if win == True:
-                new_pokemon()
+            if win is True:
+                pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list = new_pokemon()
                 update_screen()
                 win = False
 
