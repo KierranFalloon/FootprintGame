@@ -86,15 +86,24 @@ def main():
         pygame.display.update(foot_zone)
         pygame.display.update(boxes)
 
-    def make_text():
+    def make_text(text):
 
-        global text_change
-        text_change = text_font.render(text_string, True, color)
+        global label
+        label = []
+        try:
+            for line in text: 
+                label.append(text_font.render(line, True, color))
+        except Exception as e:
+            print('Error loading text: \n{}'.format(e))
 
     def change_text():
  
         screen.blit(text_box, (SCREEN_WIDTH/2, 3*SCREEN_HEIGHT/4))
-        screen.blit(text_change, (SCREEN_WIDTH/2+50, 3*SCREEN_HEIGHT/4+50))
+
+        position = [SCREEN_WIDTH/2+50, 3*SCREEN_HEIGHT/4+50]
+
+        for line in range(len(label)):  
+            screen.blit(label[line],(position[0],position[1]+(line*fontsize)+(15*line)))
     
     pygame.mixer.pre_init()
     pygame.mixer.init()
@@ -103,7 +112,8 @@ def main():
 
     hollow_font = pygame.font.Font('Fonts/PokemonHollow.ttf',25)
     solid_font = pygame.font.Font('Fonts/PokemonSolid.ttf',25)
-    text_font = pygame.font.Font('Fonts/PKMN-Mystery-Dungeon.ttf', 50)
+    fontsize = 50
+    text_font = pygame.font.Font('Fonts/PKMN-Mystery-Dungeon.ttf', fontsize)
 
     pygame.mixer.music.load("Sounds/Music.mp3")
     pygame.mixer.music.set_volume(0.3)
@@ -164,14 +174,13 @@ def main():
     new_pokemon()
 
     game_text_correct_strings = [
-        "KF: .... Yep! Looks like you're right to me!",
-        "KF: Heard ya! Come on in, visitor!"
-
+        ["KF: .... Yep! Looks like you're right to me!"],
+        ["KF: Heard ya! Come on in, visitor!"]
     ]
     
     game_text_incorrect_strings = [
-        "KF: .... Huh?! Looks wrong to me!",
-        "KF: Huh? I don't think so. Try again!",
+        ["KF: .... Huh?! Looks wrong to me!"],
+        ["KF: Huh? I don't think so. Try again!"],
     ]
     running = True 
     delay = False # Text based delay
@@ -196,8 +205,8 @@ def main():
                 pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
                 temp = []
 
-            text_string = "KF: Here comes a Pokémon! \n Check its footprint and tell me what it is!"
-            name_text = text_font.render(text_string, True, color)
+            text_string = ["KF: Here comes a Pokémon! Check out it's footprint",
+                            "and tell me what species is!"]
 
         #checks if a mouse is clicked INSIDE of a box
         if mouse_in_boxes != []:
@@ -206,13 +215,14 @@ def main():
                 temp = mouse_in_boxes[0]
 
             pokemon_hovering = pokemon_list[pokemon_in_boxes.index(mouse_in_boxes[0])].name
-            text_string = "KF: Is this pokemon {}?".format(str(pokemon_hovering))
+            text_string = ["KF: Is this pokemon {}?".format(str(pokemon_hovering))]
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 clicked_sprites = [index for index, p, in enumerate(collision_boxes) if p.collidepoint(mouse)] # See which box was clicked
                 pokemon_clicked = pokemon_in_boxes.index(*clicked_sprites) # Reverse engineer which pokemon was clicked from box number
 
-                text_string = "The footprint is {}'s! The footprint is {}'s!".format(str(pokemon_list[pokemon_clicked].name), str(pokemon_list[pokemon_clicked].name))
+                text_string = ["The footprint is {}'s!".format(str(pokemon_list[pokemon_clicked].name)),
+                                "The footprint is {}'s!".format(str(pokemon_list[pokemon_clicked].name))]
                 delay = True
                 update_screen()
 
@@ -251,14 +261,14 @@ def main():
         screen.blit(pokemon_box, pokemon_boxes[3])
 
         if delay == False:
-            make_text()
+            make_text(text_string)
             change_text()
             update_screen()
         
         if delay == True:
             init_time = pygame.time.get_ticks()
             while not pygame.time.get_ticks() > 1000 + init_time:
-                make_text()
+                make_text(text_string)
                 change_text()
                 update_screen()
             delay = False

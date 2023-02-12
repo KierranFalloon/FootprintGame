@@ -123,6 +123,3 @@ def generate_pokemon():
     pokemon_4 = Pokemon(pokemon_4_name, other_pokemon[3], pokemon_4_position, pokemon_4_sprite, pokemon_4_footprint, True, False) # 4th random pokemon is correct
 
     return pokemon_1, pokemon_2, pokemon_3, pokemon_4
-
-def tuple_subtraction(tuple1, tuple2):
-    return tuple(map(lambda i, j: i - j, tuple1, tuple2))
