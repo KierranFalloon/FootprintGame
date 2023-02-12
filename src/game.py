@@ -1,7 +1,10 @@
 from dataclass import Pokemon
-from utils import TestRequirements, tuple_checker, generate_pokemon, get_pokemon, tuple_subtraction, read_stats, add_stats
+
+import cython_utils.c_utils as c
+from utils import TestRequirements, generate_pokemon, tuple_subtraction
 from utils import color_dark, color, color_light
 import threading
+
 try:
     TestRequirements().test_requirements()
 except Exception as e:
@@ -16,7 +19,7 @@ import threading
 
 def main():
 
-    w, t, r = read_stats()
+    w, t, r = c.read_stats()
     def new_pokemon():
         global pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list
 
@@ -25,10 +28,10 @@ def main():
 
         # Pokemon footprint definition
         footprint_image = pygame.transform.scale(pokemon_4.footprint, (200, 200))
-        name1 = solid_font.render(pokemon_1.name, None, color_dark)
-        name2 = solid_font.render(pokemon_2.name, None, color_dark)
-        name3 = solid_font.render(pokemon_3.name, None, color_dark)
-        name4 = solid_font.render(pokemon_4.name, None, color_dark)
+        name1 = solid_font.render(pokemon_1.name, None, color)
+        name2 = solid_font.render(pokemon_2.name, None, color)
+        name3 = solid_font.render(pokemon_3.name, None, color)
+        name4 = solid_font.render(pokemon_4.name, None, color)
         pokemon_1.footprint = pygame.transform.scale(pokemon_1.footprint, (100, 100))
         pokemon_2.footprint = pygame.transform.scale(pokemon_2.footprint, (100, 100))
         pokemon_3.footprint = pygame.transform.scale(pokemon_3.footprint, (100, 100))
@@ -47,7 +50,7 @@ def main():
 
     def update_screen():
         screen.blit(pokemon_1.sprite, pokemon_1.position)
-        name_1_rect = name1.get_rect(center = tuple_subtraction(pokemon_1.position, (0, -200)))
+        name_1_rect = name1.get_rect(center = tuple_subtraction(pokemon_1.position, (-50,-175)))
         screen.blit(name1, name_1_rect)
 
         if pokemon_1.pressed == True:
@@ -55,7 +58,7 @@ def main():
             screen.blit(pokemon_1.footprint, footprint_rect)
 
         screen.blit(pokemon_2.sprite, pokemon_2.position)
-        name_2_rect = name2.get_rect(center = tuple_subtraction(pokemon_2.position, (0, -200)))
+        name_2_rect = name2.get_rect(center = tuple_subtraction(pokemon_2.position, (-50,-175)))
         screen.blit(name2, name_2_rect)
 
         if pokemon_2.pressed == True:
@@ -63,7 +66,7 @@ def main():
             screen.blit(pokemon_2.footprint, footprint_rect)
 
         screen.blit(pokemon_3.sprite, pokemon_3.position)
-        name_3_rect = name3.get_rect(center = tuple_subtraction(pokemon_3.position, (0, -200)))
+        name_3_rect = name3.get_rect(center = tuple_subtraction(pokemon_3.position, (-50,-175)))
         screen.blit(name3, name_3_rect)
 
         if pokemon_3.pressed == True:
@@ -71,7 +74,7 @@ def main():
             screen.blit(pokemon_3.footprint, footprint_rect)
 
         screen.blit(pokemon_4.sprite, pokemon_4.position)
-        name_4_rect = name4.get_rect(center = tuple_subtraction(pokemon_4.position, (0, -200)))
+        name_4_rect = name4.get_rect(center = tuple_subtraction(pokemon_4.position, (-50,-175)))
         screen.blit(name4, name_4_rect)
         if pokemon_4.pressed == True:
             footprint_rect = pokemon_4.footprint.get_rect(center = tuple_subtraction(pokemon_4.position, (-250, -100)))
@@ -93,6 +96,7 @@ def main():
         screen.blit(text_box, (SCREEN_WIDTH/2, 3*SCREEN_HEIGHT/4))
         screen.blit(text_change, (SCREEN_WIDTH/2+50, 3*SCREEN_HEIGHT/4+50))
     
+    pygame.mixer.pre_init()
     pygame.mixer.init()
     pygame.init()
     clock = pygame.time.Clock()
@@ -101,8 +105,14 @@ def main():
     solid_font = pygame.font.Font('Fonts/PokemonSolid.ttf',25)
     text_font = pygame.font.Font('Fonts/PKMN-Mystery-Dungeon.ttf', 50)
 
-    pygame.mixer.music.load("Music.mp3")
-    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.load("Sounds/Music.mp3")
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(loops=-1, fade_ms=500)
+
+    pokemon_box_highlight_sound = pygame.mixer.Sound('Sounds/5.wav')
+    correct_sound = pygame.mixer.Sound('Sounds/7.wav')
+    incorrect_sound = pygame.mixer.Sound('Sounds/3.wav')
+
     pygame.display.set_caption("Footprint game!")
     clock = pygame.time.Clock()
 
@@ -163,9 +173,11 @@ def main():
         "KF: .... Huh?! Looks wrong to me!",
         "KF: Huh? I don't think so. Try again!",
     ]
-    running = True
-    delay = False
-    win = False
+    running = True 
+    delay = False # Text based delay
+    win = False # win condition, used for resetting pokemon
+    temp = [] # temporary box tracker to check if mouse switches between box
+
     while running:
         clock.tick(30)
         mouse = tuple(pygame.mouse.get_pos())
@@ -175,16 +187,23 @@ def main():
 
         if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE:
 
-            add_stats(w, t)
+            c.add_stats(w, t)
             running = False
             pygame.quit()
 
         if mouse_in_boxes == []: # If not hovering a pokemon choice
-            text_string = "KF: Here comes a Pokémon! Check its footprint and tell me what it is!"
+            if temp != []:
+                pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
+                temp = []
+
+            text_string = "KF: Here comes a Pokémon! \n Check its footprint and tell me what it is!"
             name_text = text_font.render(text_string, True, color)
 
         #checks if a mouse is clicked INSIDE of a box
         if mouse_in_boxes != []:
+            if mouse_in_boxes[0] != temp:
+                pygame.mixer.Channel(0).play(pokemon_box_highlight_sound, loops = 0)
+                temp = mouse_in_boxes[0]
 
             pokemon_hovering = pokemon_list[pokemon_in_boxes.index(mouse_in_boxes[0])].name
             text_string = "KF: Is this pokemon {}?".format(str(pokemon_hovering))
@@ -201,6 +220,7 @@ def main():
 
                 if pokemon_list[pokemon_clicked].correct == True: # If correct pokemon
 
+                    pygame.mixer.Channel(1).play(correct_sound)
                     text_string = random.choice(game_text_correct_strings)
                     delay = True
                     win = True
@@ -208,15 +228,16 @@ def main():
                     t += 1
                     pokemon_list[pokemon_clicked].pressed = True
                     pygame.display.update(boxes)
-                    add_stats(w, t)
+                    c.add_stats(w, t)
                 
                 else:
 
+                    pygame.mixer.Channel(2).play(incorrect_sound)
                     text_string = random.choice(game_text_incorrect_strings)
                     delay = True
 
                     t += 1
-                    add_stats(w, t)
+                    c.add_stats(w, t)
                     pokemon_list[pokemon_clicked].pressed = True
         
         screen.blit(background, (SCREEN_WIDTH-BG_WIDTH, 0))
@@ -236,7 +257,7 @@ def main():
         
         if delay == True:
             init_time = pygame.time.get_ticks()
-            while not pygame.time.get_ticks() > 3000 + init_time:
+            while not pygame.time.get_ticks() > 1000 + init_time:
                 make_text()
                 change_text()
                 update_screen()
