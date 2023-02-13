@@ -1,5 +1,3 @@
-from dataclass import Pokemon
-
 import cython_utils.c_utils as c
 from utils import TestRequirements, generate_pokemon, tuple_subtraction
 from utils import color_dark, color, color_light
@@ -20,8 +18,8 @@ import threading
 def main():
 
     w, t, r = c.read_stats()
-    def new_pokemon() -> None:
 
+    def new_pokemon() -> None:
         """ Generates new random Pokémon choices, rendering their names and sprites from API.
 
         Returns:
@@ -31,6 +29,8 @@ def main():
             pokemon_in_boxes : List of box indexes which Pokemon are in
             pokemon_list : List of Pokemon
         """
+
+        global pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list
 
         # Pokemon sprites and names
         pokemon_1, pokemon_2, pokemon_3, pokemon_4 = generate_pokemon()
@@ -56,8 +56,6 @@ def main():
         ###
 
         pokemon_list = [pokemon_1, pokemon_2, pokemon_3, pokemon_4] # List of pokemon generated, in order 
-
-        return pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list
 
     def update_screen() -> None:
 
@@ -129,7 +127,7 @@ def main():
         position = [SCREEN_WIDTH/2+50, 3*SCREEN_HEIGHT/4+50]
 
         for index, line in enumerate(label):
-            screen.blit(label[index],(position[0],position[1]+(line*fontsize)+(15*line)))
+            screen.blit(label[index],(position[0],position[1]+(index*fontsize)+(15*index)))
     
     pygame.mixer.pre_init()
     pygame.mixer.init()
@@ -196,7 +194,7 @@ def main():
         pokemon_box_rect_4
     ]
 
-    pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list = new_pokemon()
+    new_pokemon()
 
     game_text_correct_strings = [
         ["KF: .... Yep! Looks like you're right to me!"],
@@ -255,7 +253,8 @@ def main():
                 pokemon_list[pokemon_clicked].pressed = True # Allow footprint to appear
 
                 if pokemon_list[pokemon_clicked].correct is True: # If correct pokemon
-
+                    multi = threading.Thread(target=new_pokemon)
+                    multi.start()
                     pygame.mixer.Channel(1).play(correct_sound)
                     text_string = random.choice(game_text_correct_strings)
                     delay = True
@@ -299,8 +298,7 @@ def main():
                 update_screen()
             delay = False
             if win is True:
-                pokemon_1, pokemon_2, pokemon_3, pokemon_4, name1, name2, name3, name4, footprint_image, pokemon_in_boxes, pokemon_list = new_pokemon()
-                update_screen()
+                update_screen() # See above - New pokemon are generated in a parallel thread once the correct box is pressed
                 win = False
 
     pygame.quit()
