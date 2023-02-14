@@ -160,26 +160,35 @@ def main():
     foot_zone = pygame.Rect(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT)
     boxes = pygame.Rect(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 
-    bg = pygame.image.load(os.path.join('Images', 'Background.png')).convert_alpha()
-    bg2 = pygame.image.load(os.path.join('Images', 'Background_2.png')).convert_alpha()
+    # Background utils
+    bg = pygame.image.load(os.path.join('Images', 'Background.png')).convert()
+    bg2 = pygame.image.load(os.path.join('Images', 'Background_2.png')).convert()
 
     BG_WIDTH = (SCREEN_WIDTH/2)
     BG_HEIGHT = 0.75 * SCREEN_HEIGHT
 
     background = pygame.transform.scale(bg, (BG_WIDTH, BG_HEIGHT))
+    ratio = (background.get_size()[0]/bg.get_size()[0], background.get_size()[1]/bg.get_size()[1])
     BG_center = ((SCREEN_WIDTH - (BG_WIDTH/2) - 100),  (SCREEN_HEIGHT - (BG_HEIGHT) - 50))
 
-    background_2 = pygame.transform.scale(bg2, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    background_2 = pygame.transform.smoothscale(bg2, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
     pokemon_boxes = [(0,0), (SCREEN_WIDTH/4,0), (0,SCREEN_HEIGHT/4), (SCREEN_WIDTH/4,SCREEN_HEIGHT/4)]
     text_box = pygame.image.load(os.path.join('Images', 'text_box_blank.png')).convert_alpha()
-    text_box = pygame.transform.scale(text_box, (SCREEN_WIDTH/2, SCREEN_HEIGHT/4))
-    #text_box_size = text_box.get_rect(center = other_center)
+    text_box = pygame.transform.smoothscale(text_box, (SCREEN_WIDTH/2, SCREEN_HEIGHT/4))
 
+    # Timer screen utils
+    red_timer = pygame.image.load(os.path.join('Images', 'Red_timer.png')).convert_alpha()
+    red_timer = pygame.transform.smoothscale(red_timer, (red_timer.get_size()[0]*ratio[0], red_timer.get_size()[1]*ratio[1]))
+    green_timer = pygame.image.load(os.path.join('Images', 'Green_timer.png')).convert_alpha()
+    green_timer = pygame.transform.smoothscale(green_timer, (green_timer.get_size()[0]*ratio[0], green_timer.get_size()[1]*ratio[1]))
+    timer_positions = [(1100 + i * 50, 675) for i in range(10)]
+
+    # Pokemon box utils
     pokemon_box = pygame.image.load(os.path.join('Images', 'Card.png')).convert_alpha()
-    pokemon_box = pygame.transform.scale(pokemon_box, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
+    pokemon_box = pygame.transform.smoothscale(pokemon_box, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
 
     pokemon_box_highlight = pygame.image.load(os.path.join('Images', 'Highlight.png')).convert_alpha()
-    pokemon_box_highlight = pygame.transform.scale(pokemon_box_highlight, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
+    pokemon_box_highlight = pygame.transform.smoothscale(pokemon_box_highlight, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
 
     # Collision detection
     pokemon_box_rect_1 = pokemon_box.get_rect(center = (SCREEN_WIDTH/8, SCREEN_HEIGHT/8))
@@ -194,7 +203,7 @@ def main():
         pokemon_box_rect_4
     ]
 
-    new_pokemon()
+    new_pokemon() # Generate initial Pokemon
 
     game_text_correct_strings = [
         ["KF: .... Yep! Looks like you're right to me!"],
@@ -205,11 +214,16 @@ def main():
         ["KF: .... Huh?! Looks wrong to me!"],
         ["KF: Huh? I don't think so. Try again!"],
     ]
+
     running = True 
     delay = False # Text based delay
+    delay_time = 1000
     win = False # win condition, used for resetting pokemon
+    lose = False
     temp = [] # temporary box tracker to check if mouse switches between box
-
+    count = 0
+    timer_event = pygame.USEREVENT
+    pygame.time.set_timer(timer_event, 3000)
     ### Game running
     while running:
         clock.tick(30)
@@ -270,14 +284,40 @@ def main():
                     pygame.mixer.Channel(2).play(incorrect_sound)
                     text_string = random.choice(game_text_incorrect_strings)
                     delay = True
-
                     t += 1
                     c.add_stats(w, t)
                     pokemon_list[pokemon_clicked].pressed = True
-        
+    
+
+        game_text_out_of_time_strings = [
+            ["KF: Out of time! Pick up the pace!"], 
+            ["The correct answer is {}!".format(*[i.name for i in pokemon_list if i.correct is True]),
+            "Buck up and snap out of it!"]]
+
+        stats_text = "P: {}, T: {}, {}".format(w, t, str(round(float(w)/float(t)*100, 1)))
+        stats_rendered = solid_font.render(stats_text, True, color_light)
+
+        if count is 10:
+            text_string = random.choice(game_text_out_of_time_strings)
+            multi = threading.Thread(target=new_pokemon)
+            multi.start()
+            lose = True
+            delay_time = 2000
+            delay = True
+
         screen.blit(background, (SCREEN_WIDTH-BG_WIDTH, 0))
         screen.blit(background_2, (0, SCREEN_HEIGHT/2))
         screen.blit(footprint_image, BG_center)
+        screen.blit(stats_rendered, (1500, 100))
+        #screen.blit(clock_img, (1000, 650))
+
+        for index, coordinate in enumerate(timer_positions[0:10-count]):
+            screen.blit(green_timer, coordinate)
+        for index2, coordinate2 in enumerate(timer_positions[10-count:10]):
+            screen.blit(red_timer, coordinate2)
+        if event.type == timer_event and count < 10:
+            count += 1
+        
         pygame.display.update(foot_zone)
 
         screen.blit(pokemon_box, pokemon_boxes[0])
@@ -292,15 +332,20 @@ def main():
         
         if delay is True:
             init_time = pygame.time.get_ticks()
-            while not pygame.time.get_ticks() > 1000 + init_time:
+            while not pygame.time.get_ticks() > delay_time + init_time:
                 label = make_text(text_string)
                 change_text(label)
                 update_screen()
             delay = False
             if win is True:
+                count = 0
                 update_screen() # See above - New pokemon are generated in a parallel thread once the correct box is pressed
                 win = False
-
+            if lose is True:
+                count = 0
+                lose = False
+                update_screen()
+            
     pygame.quit()
 
 main()

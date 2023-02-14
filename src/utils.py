@@ -166,3 +166,4 @@ def tuple_subtraction(tuple1 : tuple, tuple2 : tuple) -> tuple:
         tuple: New coordinates of the form (x - x2, y - y2)
     """
     return tuple(map(lambda i, j: i - j, tuple1, tuple2))
+    
