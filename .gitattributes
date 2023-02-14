@@ -1,0 +1,2 @@
+src/cython_utils/c_utils.c linguist-detectable
+src/cython_utils/c_utils.pyx linguist-detectable
