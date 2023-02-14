@@ -40,7 +40,7 @@ def list_of_files() -> list:
     """
 
     path = os.path.join(os.getcwd(), 'Sprites')
-    files = [int(f.split('.')[0]) for f in os.listdir(path)]
+    files = [(f.split('.')[0]) for f in os.listdir(path)]
     return files
 
 def get_pokemon() -> list:
