@@ -1,2 +1,2 @@
-src/cython_utils/c_utils.c linguist-detectable
-src/cython_utils/c_utils.pyx linguist-detectable
+src/cython_utils/c_utils.c linguist-language=c linguist-detectable
+src/cython_utils/c_utils.pyx linguist-language=cython linguist-detectable
