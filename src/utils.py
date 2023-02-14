@@ -32,17 +32,36 @@ color_light = (170,170,170)
 # dark shade of the button
 color_dark = (100,100,100)
 
-def list_of_files():
-    pokemon_list = []
+def list_of_files() -> list:
+    """ Returns the available Pokémon numbers from the sprites folder
+
+    Returns:
+        files (list): List of available footprint sprites
+    """
+
     path = os.path.join(os.getcwd(), 'Sprites')
     files = [int(f.split('.')[0]) for f in os.listdir(path)]
     return files
 
-def get_pokemon():
+def get_pokemon() -> list:
+    """ Chooses 4 (pseudo) random Pokémon from the available footprint sprites to be used
+
+    Returns:
+        list: List of Pokémon used in the current game instance
+    """
 # Setup Pokemon list
     return random.sample(list_of_files(), 4)
 
-def surf_from_api(other_pokemon):
+def surf_from_api(other_pokemon : list) -> pygame.image:
+    """ Gets the Pokémon sprites from PokeAPI according to the number chosen, with a 1/4096 chance of choosing a shiny
+
+
+    Args:
+        other_pokemon (list): List of Pokémon chosen from get_pokemon()
+
+    Returns:
+        pygame.image: Rendered sprite classes for each chosen Pokémon
+    """
     shiny_number = random.randint(1, 4096)
     
     if shiny_number == 1:
@@ -68,6 +87,14 @@ def surf_from_api(other_pokemon):
     return pokemon_1_img, pokemon_2_img, pokemon_3_img, pokemon_4_img
 
 def name_from_api(number) -> str:
+    """ Gets the Pokémon name from PokeAPI according to the number chosen
+
+    Args:
+        number (int): Pokémon pokedex number
+
+    Returns:
+        str: The name of the Pokémon from the PokeAPI .json
+    """
 
     pokemon_api = "https://pokeapi.co/api/v2/pokemon/{}".format(number)
 
@@ -77,14 +104,18 @@ def name_from_api(number) -> str:
     except Exception as e:
         print(e, "\n pokemon: {}".format(number))
 
-def generate_pokemon():
+def generate_pokemon() -> Pokemon:
+    """ Uses all information gathered on the Pokémon to create a Pokémon class (from dataclass.py) for each
+
+    Returns:
+        Pokemon: Pokemon dataclass
+    """
 
     # Resolution sprite scaling
     infoObject = pygame.display.Info()
     # Set up the drawing window
     SCREEN_WIDTH = infoObject.current_w
     SCREEN_HEIGHT = infoObject.current_h
-    pokemon_boxes = [(0,0), (SCREEN_WIDTH/4,0), (0,SCREEN_HEIGHT/4), (SCREEN_WIDTH/4,SCREEN_HEIGHT/4)]
     pokemon_box = pygame.image.load(os.path.join('Images', 'Card.png')).convert_alpha()
     pokemon_box_2 = pygame.transform.scale(pokemon_box, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
     ratio = ((pokemon_box_2.get_size()[0] / pokemon_box.get_size()[0], pokemon_box_2.get_size()[1] / pokemon_box.get_size()[1]))
@@ -124,5 +155,15 @@ def generate_pokemon():
 
     return pokemon_1, pokemon_2, pokemon_3, pokemon_4
 
-def tuple_subtraction(tuple1, tuple2):
+def tuple_subtraction(tuple1 : tuple, tuple2 : tuple) -> tuple:
+    """ Subtracts two tuples, useful for transforming sprites on the screen
+
+    Args:
+        tuple1 (tuple): Reference tuple (initial coordinates / coordinates currently) (x, y)
+        tuple2 (tuple): Transformation tuple (x2, y2)
+
+    Returns:
+        tuple: New coordinates of the form (x - x2, y - y2)
+    """
     return tuple(map(lambda i, j: i - j, tuple1, tuple2))
+    
