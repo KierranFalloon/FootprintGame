@@ -1,2 +1,3 @@
 *.c linguist-detectable
+*.pyx linguist-detctable
 *.so linguist-detectable
