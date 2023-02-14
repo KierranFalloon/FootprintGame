@@ -1,2 +1,3 @@
 *.c linguist-language=C
+*.pyx linguist-language=C
 *.so linguist-language=C
