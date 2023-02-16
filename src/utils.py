@@ -4,6 +4,7 @@ import pkg_resources
 
 _REQUIREMENTS_PATH = Path(__file__).parent.with_name("requirements.txt")
 
+
 class TestRequirements(unittest.TestCase):
     """Test availability of required packages."""
 
@@ -15,6 +16,7 @@ class TestRequirements(unittest.TestCase):
             with self.subTest(requirement=requirement):
                 pkg_resources.require(requirement)
 
+
 from dataclass import Pokemon
 import os
 import io
@@ -24,36 +26,39 @@ import requests
 import random
 
 # white color
-color = (255,255,255)
-  
+color = (255, 255, 255)
+
 # light shade of the button
-color_light = (170,170,170)
-  
+color_light = (170, 170, 170)
+
 # dark shade of the button
-color_dark = (100,100,100)
+color_dark = (100, 100, 100)
+
 
 def list_of_files() -> list:
-    """ Returns the available Pokémon numbers from the sprites folder
+    """Returns the available Pokémon numbers from the sprites folder
 
     Returns:
         files (list): List of available footprint sprites
     """
 
-    path = os.path.join(os.getcwd(), 'Sprites')
-    files = [(f.split('.')[0]) for f in os.listdir(path)]
+    path = os.path.join(os.getcwd(), "Sprites")
+    files = [(f.split(".")[0]) for f in os.listdir(path)]
     return files
 
+
 def get_pokemon() -> list:
-    """ Chooses 4 (pseudo) random Pokémon from the available footprint sprites to be used
+    """Chooses 4 (pseudo) random Pokémon from the available footprint sprites to be used
 
     Returns:
         list: List of Pokémon used in the current game instance
     """
-# Setup Pokemon list
+    # Setup Pokemon list
     return random.sample(list_of_files(), 4)
 
-def surf_from_api(other_pokemon : list) -> pygame.image:
-    """ Gets the Pokémon sprites from PokeAPI according to the number chosen, with a 1/4096 chance of choosing a shiny
+
+def surf_from_api(other_pokemon: list) -> pygame.image:
+    """Gets the Pokémon sprites from PokeAPI according to the number chosen, with a 1/4096 chance of choosing a shiny
 
 
     Args:
@@ -63,13 +68,13 @@ def surf_from_api(other_pokemon : list) -> pygame.image:
         pygame.image: Rendered sprite classes for each chosen Pokémon
     """
     shiny_number = random.randint(1, 4096)
-    
+
     if shiny_number == 1:
 
         image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/{}.png"
-    
+
     else:
-        image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{}.png" # Open source pokemon sprites
+        image_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{}.png"  # Open source pokemon sprites
     image_files = []
     for i in range(4):
         image_str = urlopen(image_url.format(other_pokemon[i])).read()
@@ -86,8 +91,9 @@ def surf_from_api(other_pokemon : list) -> pygame.image:
 
     return pokemon_1_img, pokemon_2_img, pokemon_3_img, pokemon_4_img
 
+
 def name_from_api(number) -> str:
-    """ Gets the Pokémon name from PokeAPI according to the number chosen
+    """Gets the Pokémon name from PokeAPI according to the number chosen
 
     Args:
         number (int): Pokémon pokedex number
@@ -104,8 +110,9 @@ def name_from_api(number) -> str:
     except Exception as e:
         print(e, "\n pokemon: {}".format(number))
 
+
 def generate_pokemon() -> Pokemon:
-    """ Uses all information gathered on the Pokémon to create a Pokémon class (from dataclass.py) for each
+    """Uses all information gathered on the Pokémon to create a Pokémon class (from dataclass.py) for each
 
     Returns:
         Pokemon: Pokemon dataclass
@@ -116,47 +123,107 @@ def generate_pokemon() -> Pokemon:
     # Set up the drawing window
     SCREEN_WIDTH = infoObject.current_w
     SCREEN_HEIGHT = infoObject.current_h
-    pokemon_box = pygame.image.load(os.path.join('Images', 'Card.png')).convert_alpha()
-    pokemon_box_2 = pygame.transform.scale(pokemon_box, (SCREEN_WIDTH/4, SCREEN_HEIGHT/4))
-    ratio = ((pokemon_box_2.get_size()[0] / pokemon_box.get_size()[0], pokemon_box_2.get_size()[1] / pokemon_box.get_size()[1]))
+    pokemon_box = pygame.image.load(os.path.join("Images", "Card.png")).convert_alpha()
+    pokemon_box_2 = pygame.transform.scale(
+        pokemon_box, (SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4)
+    )
+    ratio = (
+        pokemon_box_2.get_size()[0] / pokemon_box.get_size()[0],
+        pokemon_box_2.get_size()[1] / pokemon_box.get_size()[1],
+    )
 
     # Pokemon sprites and names
-    other_pokemon = get_pokemon() # initially 4th pokemon in the list is the correct one
+    other_pokemon = (
+        get_pokemon()
+    )  # initially 4th pokemon in the list is the correct one
 
     # Get pokemon names and footprints
     pokemon_1_name = name_from_api(other_pokemon[0])
-    pokemon_1_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[0])+'.png')).convert_alpha()
+    pokemon_1_footprint = pygame.image.load(
+        os.path.join("Sprites", str(other_pokemon[0]) + ".png")
+    ).convert_alpha()
 
     pokemon_2_name = name_from_api(other_pokemon[1])
-    pokemon_2_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[1])+'.png')).convert_alpha()
+    pokemon_2_footprint = pygame.image.load(
+        os.path.join("Sprites", str(other_pokemon[1]) + ".png")
+    ).convert_alpha()
 
     pokemon_3_name = name_from_api(other_pokemon[2])
-    pokemon_3_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[2])+'.png')).convert_alpha()
+    pokemon_3_footprint = pygame.image.load(
+        os.path.join("Sprites", str(other_pokemon[2]) + ".png")
+    ).convert_alpha()
 
     pokemon_4_name = name_from_api(other_pokemon[3])
-    pokemon_4_footprint = pygame.image.load(os.path.join('Sprites', str(other_pokemon[3])+'.png')).convert_alpha()
+    pokemon_4_footprint = pygame.image.load(
+        os.path.join("Sprites", str(other_pokemon[3]) + ".png")
+    ).convert_alpha()
 
-    pokemon_1_sprite, pokemon_2_sprite, pokemon_3_sprite, pokemon_4_sprite = surf_from_api(other_pokemon) #sprites
+    (
+        pokemon_1_sprite,
+        pokemon_2_sprite,
+        pokemon_3_sprite,
+        pokemon_4_sprite,
+    ) = surf_from_api(
+        other_pokemon
+    )  # sprites
 
     h_offset = 250 * ratio[0]
     v_offset = 150 * ratio[1]
-    positions = [(h_offset,v_offset), ((SCREEN_WIDTH/4)+h_offset,v_offset), (h_offset,(SCREEN_HEIGHT/4)+v_offset), ((SCREEN_WIDTH/4)+h_offset,(SCREEN_HEIGHT/4)+v_offset)]
-    
-    rand_pokemon_positions = random.sample(positions, 4) # Positions randomised
+    positions = [
+        (h_offset, v_offset),
+        ((SCREEN_WIDTH / 4) + h_offset, v_offset),
+        (h_offset, (SCREEN_HEIGHT / 4) + v_offset),
+        ((SCREEN_WIDTH / 4) + h_offset, (SCREEN_HEIGHT / 4) + v_offset),
+    ]
+
+    rand_pokemon_positions = random.sample(positions, 4)  # Positions randomised
     pokemon_1_position = rand_pokemon_positions[0]
     pokemon_2_position = rand_pokemon_positions[1]
     pokemon_3_position = rand_pokemon_positions[2]
     pokemon_4_position = rand_pokemon_positions[3]
 
-    pokemon_1 = Pokemon(pokemon_1_name, other_pokemon[0], pokemon_1_position, pokemon_1_sprite, pokemon_1_footprint, False, False)
-    pokemon_2 = Pokemon(pokemon_2_name, other_pokemon[1], pokemon_2_position, pokemon_2_sprite, pokemon_2_footprint, False, False)
-    pokemon_3 = Pokemon(pokemon_3_name, other_pokemon[2], pokemon_3_position, pokemon_3_sprite, pokemon_3_footprint, False, False)
-    pokemon_4 = Pokemon(pokemon_4_name, other_pokemon[3], pokemon_4_position, pokemon_4_sprite, pokemon_4_footprint, True, False) # 4th random pokemon is correct
+    pokemon_1 = Pokemon(
+        pokemon_1_name,
+        other_pokemon[0],
+        pokemon_1_position,
+        pokemon_1_sprite,
+        pokemon_1_footprint,
+        False,
+        False,
+    )
+    pokemon_2 = Pokemon(
+        pokemon_2_name,
+        other_pokemon[1],
+        pokemon_2_position,
+        pokemon_2_sprite,
+        pokemon_2_footprint,
+        False,
+        False,
+    )
+    pokemon_3 = Pokemon(
+        pokemon_3_name,
+        other_pokemon[2],
+        pokemon_3_position,
+        pokemon_3_sprite,
+        pokemon_3_footprint,
+        False,
+        False,
+    )
+    pokemon_4 = Pokemon(
+        pokemon_4_name,
+        other_pokemon[3],
+        pokemon_4_position,
+        pokemon_4_sprite,
+        pokemon_4_footprint,
+        True,
+        False,
+    )  # 4th random pokemon is correct
 
     return pokemon_1, pokemon_2, pokemon_3, pokemon_4
 
-def tuple_subtraction(tuple1 : tuple, tuple2 : tuple) -> tuple:
-    """ Subtracts two tuples, useful for transforming sprites on the screen
+
+def tuple_subtraction(tuple1: tuple, tuple2: tuple) -> tuple:
+    """Subtracts two tuples, useful for transforming sprites on the screen
 
     Args:
         tuple1 (tuple): Reference tuple (initial coordinates / coordinates currently) (x, y)
@@ -166,4 +233,3 @@ def tuple_subtraction(tuple1 : tuple, tuple2 : tuple) -> tuple:
         tuple: New coordinates of the form (x - x2, y - y2)
     """
     return tuple(map(lambda i, j: i - j, tuple1, tuple2))
-    
