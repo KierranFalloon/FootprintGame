@@ -20,11 +20,7 @@ If you have an idea for an enhancement to this project, please create an issue i
 
 ## Supporting
 
-If you enjoy this work, consider supporting me.
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M3ISOF2)
-
-Equally, you can contribute your code from personal changes as long as it passes a pull request through me:
+You can contribute your code from personal changes as long as it passes a pull request through me:
 
 - Fork the repository and create your branch from main.
 - Make sure your code follows the project's coding conventions.
