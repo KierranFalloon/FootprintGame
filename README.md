@@ -1,4 +1,6 @@
 # Footprint Game
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 Python based Pokémon Footprint game! This game is based on the [Sentry Duty](https://pokemon.fandom.com/wiki/Sentry_Duty) guild job present in Pokémon Mystery Dungeon Explorers of Sky and Pokémon Mystery Dungeon Explorers of Time and Darkness games. However, this is extended up to Generation VIII (8). This project has no affiliation with Nintendo or the Pokémon Company; Pokémon and Pokémon character names are trademarks of Nintendo, and Pokémon sprites within are Copyright (c) The Pokémon Company.
 
 ## Requirements
