@@ -293,8 +293,12 @@ def main():
             ["KF: Out of time! Pick up the pace!"], 
             ["The correct answer is {}!".format(*[i.name for i in pokemon_list if i.correct is True]),
             "Buck up and snap out of it!"]]
+        
+        try:
+            stats_text = "P: {}, T: {}, {}".format(w, t, str(round(float(w)/float(t)*100, 1)))
+        except ZeroDivisionError:
+            stats_text = "P: {}, T: {}, {}".format(w, t, str(" "))
 
-        stats_text = "P: {}, T: {}, {}".format(w, t, str(round(float(w)/float(t)*100, 1)))
         stats_rendered = solid_font.render(stats_text, True, color_light)
 
         if count is 10:
