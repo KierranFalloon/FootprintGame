@@ -1,5 +1,5 @@
 # Footprint Game
-Python based Pokémon Footprint game! This game is based on the [Sentry Duty](https://pokemon.fandom.com/wiki/Sentry_Duty) guild job present in Pokémon Mystery Dungeon Explorers of Sky and Pokémon Mystery Dungeon Explorers of Time and Darkness games. This project has no affiliation with Nintendo or the Pokémon Company, and all assets used are used in agreement with respective Fair Use policies.
+Python based Pokémon Footprint game! This game is based on the [Sentry Duty](https://pokemon.fandom.com/wiki/Sentry_Duty) guild job present in Pokémon Mystery Dungeon Explorers of Sky and Pokémon Mystery Dungeon Explorers of Time and Darkness games. This project has no affiliation with Nintendo or the Pokémon Company, all Pokémon sprite contents within are Copyright The Pokémon Company.
 
 ## Requirements
 
@@ -40,4 +40,4 @@ Below is a list of sources from which I acquired some assets for the game.
 |:-----------|:-------:|
 | Gen. I-V footprint sprites | [Veekun](https://veekun.com/dex/downloads) |
 | Gen. VI - VIII footprint sprites | [Wolf Pokecommunity member](https://www.pokecommunity.com/member.php?u=730428) |
-| Pokémon names <br /> Pokémon sprites | [PokeAPI](https://pokeapi.co/) |
+| Pokémon names <br /> Pokémon sprites | [PokeAPI](https://pokeapi.co/) <br /> (&copy; The Pokémon Company) |
