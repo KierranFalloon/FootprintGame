@@ -22,7 +22,7 @@ If you have an idea for an enhancement to this project, please create an issue i
 
 If you enjoy this work, consider supporting me.
 
-<a href="https://www.buymeacoffee.com/Kierran" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M3ISOF2)
 
 Equally, you can contribute your code from personal changes as long as it passes a pull request through me:
 
