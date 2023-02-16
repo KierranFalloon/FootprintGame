@@ -22,7 +22,7 @@ This is developed in Python 3.9.16, though theoretically it can work with any ve
 - Run `python setup.py build_ext --inplace install`. This uses the setup.py and requirements.txt file to `pip install` the (missing) requirements and compile the Cython / C code to an importable Python module. A log file is printed to catch errors if necessary.
 
 ## Usage
-Launch the game through `python src/game.py` or `cd src && python game.py`.
+Launch the game through `python src/game.py`.
 
 ## Acknowledgements
 
