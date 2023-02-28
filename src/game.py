@@ -17,7 +17,8 @@ import threading
 
 
 def main():
-
+    # cd to the parent directory of this file
+    os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     w, t, r = c.read_stats()
 
     def new_pokemon() -> None:
@@ -403,7 +404,7 @@ def main():
 
         stats_rendered = solid_font.render(stats_text, True, color_light)
 
-        if count is 10:
+        if count == 10:
             text_string = random.choice(game_text_out_of_time_strings)
             multi = threading.Thread(target=new_pokemon)
             multi.start()
@@ -415,7 +416,6 @@ def main():
         screen.blit(background_2, (0, SCREEN_HEIGHT / 2))
         screen.blit(footprint_image, BG_center)
         screen.blit(stats_rendered, (1500, 100))
-        # screen.blit(clock_img, (1000, 650))
 
         for index, coordinate in enumerate(timer_positions[0 : 10 - count]):
             screen.blit(green_timer, coordinate)
@@ -454,5 +454,5 @@ def main():
 
     pygame.quit()
 
-
-main()
+if __name__ == "__main__":
+    main()
