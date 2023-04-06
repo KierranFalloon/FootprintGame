@@ -294,10 +294,13 @@ def main():
             ["The correct answer is {}!".format(*[i.name for i in pokemon_list if i.correct is True]),
             "Buck up and snap out of it!"]]
 
-        stats_text = "P: {}, T: {}, {}".format(w, t, str(round(float(w)/float(t)*100, 1)))
+        try:
+            stats_text = "P: {}, T: {}, {}".format(w, t, str(round(float(w)/float(t)*100, 1)))
+        except ZeroDivisionError:
+            stats_text = "P: {}, T: {}, {}".format(w, t, str(" "))
         stats_rendered = solid_font.render(stats_text, True, color_light)
 
-        if count is 10:
+        if count == 10:
             text_string = random.choice(game_text_out_of_time_strings)
             multi = threading.Thread(target=new_pokemon)
             multi.start()
