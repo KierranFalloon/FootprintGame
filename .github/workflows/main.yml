@@ -1,0 +1,36 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Conda
+      run: |
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+        bash miniconda.sh -b -p $HOME/miniconda
+        export PATH="$HOME/miniconda/bin:$PATH"
+        echo "::add-path::$HOME/miniconda/bin"
+
+    - name: Create Conda environment
+      run: conda create -n myenv python=3.9
+    - name: Activate Conda environment
+      run: conda activate myenv
+
+    - name: Check for Cython installation
+      run: |
+        conda list | grep cython || conda install -y cython
+
+    - name: Compile Cython/C code
+      run: python setup.py build_ext --inplace install
