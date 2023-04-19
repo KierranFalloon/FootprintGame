@@ -22,6 +22,7 @@ jobs:
         bash miniconda.sh -b -p $HOME/miniconda
         export PATH="$HOME/miniconda/bin:$PATH"
         echo "$HOME/miniconda/bin" >> $GITHUB_PATH
+        conda init bash
 
     - name: Create Conda environment
       run: conda create -n myenv python=3.9
@@ -29,10 +30,12 @@ jobs:
     - name: Activate Conda environment
       run: conda activate myenv
 
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
     - name: Check for Cython installation
       run: |
         conda list | grep cython || conda install -y cython
 
     - name: Compile Cython/C code
       run: python setup.py build_ext --inplace install
-
