@@ -21,10 +21,11 @@ jobs:
         wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
         bash miniconda.sh -b -p $HOME/miniconda
         export PATH="$HOME/miniconda/bin:$PATH"
-        echo "::add-path::$HOME/miniconda/bin"
+        echo "$HOME/miniconda/bin" >> $GITHUB_PATH
 
     - name: Create Conda environment
       run: conda create -n myenv python=3.9
+      
     - name: Activate Conda environment
       run: conda activate myenv
 
@@ -34,3 +35,4 @@ jobs:
 
     - name: Compile Cython/C code
       run: python setup.py build_ext --inplace install
+
