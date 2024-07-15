@@ -13,9 +13,9 @@ Python based Pokémon Footprint game! This game is based on the [Sentry Duty](ht
 | Requirement | Version |
 |:-----------|-------|
 | Python | &ge; 3.7.16 |
-| setuptools | &ge; 65.6.3 |
+| setuptools | &ge; 70.0.0 |
 | pygame | &ge; 2.1.2 |
-| requests | &ge; 2.28.2 |
+| requests | &ge; 2.32.2 |
 | Cython (optional) | &ge; 0.29.33 |
 
 ## Installation
